@@ -946,9 +946,10 @@
     .cart-total-value { font-family: 'Anton', sans-serif; font-size: 1.4rem; color: var(--accent-bright); letter-spacing: 0.03em; }
 
     /* COUPON */
-    .coupon-wrap { display: flex; gap: 8px; margin-bottom: 12px; }
+    .coupon-wrap { display: flex; align-items: stretch; gap: 8px; margin-bottom: 12px; }
     .coupon-input {
-      flex: 1;
+      flex: 1 1 0;
+      min-width: 0;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 9px 12px;
@@ -964,7 +965,8 @@
     .coupon-input:focus { border-color: var(--border-accent); }
     .coupon-input::placeholder { color: var(--text-muted); text-transform: none; letter-spacing: 0; }
     .coupon-btn {
-      padding: 9px 14px;
+      flex: 0 0 auto;
+      padding: 9px 16px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       background: var(--bg-raised);
@@ -974,6 +976,16 @@
       transition: all 0.2s; white-space: nowrap;
     }
     .coupon-btn:hover { border-color: var(--border-accent); color: var(--accent); }
+
+    /* OUTROS LEAGUE CARD */
+    .league-outros-img {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0a3d62 0%, #1e3799 55%, #0c2461 100%);
+      font-size: 2.6rem;
+    }
 
     /* ANIMATIONS */
     @keyframes fadeUp {
@@ -1080,6 +1092,10 @@
         <img class="league-img" src="./Imgs/bundesliga.jpg" draggable="false" alt="Bundesliga">
         <div class="league-name">Bundesliga</div>
       </div>
+      <div id="outros" class="league-card" onclick="selectLeague('outros')">
+        <img class="league-img" src="./Imgs/wordplus.jpg" draggable="false" alt="Bundesliga">
+        <div class="league-name">Outros</div>
+      </div>
     </div>
   </section>
 
@@ -1090,6 +1106,7 @@
     <div class="list-subcard club-group" id="pills-laliga"></div>
     <div class="list-subcard club-group" id="pills-liga01"></div>
     <div class="list-subcard club-group" id="pills-bundesliga"></div>
+    <div class="list-subcard club-group" id="pills-outros"></div>
   </section>
 
   <!-- CONTENT — grids populated by JS -->
@@ -1102,6 +1119,7 @@
     <div class="list-shirts" id="grid-laliga"></div>
     <div class="list-shirts" id="grid-liga01"></div>
     <div class="list-shirts" id="grid-bundesliga"></div>
+    <div class="list-shirts" id="grid-outros"></div>
     <div class="list-shirts" id="grid-search"></div>
   </div>
 
@@ -1199,13 +1217,14 @@
     // Número do WhatsApp da loja (formato internacional, sem + ou espaços)
     const WHATSAPP = '5511987688538'; 
 
-    const LEAGUES = ['brasileirao', 'premierleague', 'laliga', 'liga01', 'bundesliga'];
+    const LEAGUES = ['brasileirao', 'premierleague', 'laliga', 'liga01', 'bundesliga', 'outros'];
     const LEAGUE_NAMES = {
       brasileirao: 'Brasileirão',
       premierleague: 'Premier League',
       laliga: 'La Liga',
       liga01: 'Ligue 1',
-      bundesliga: 'Bundesliga'
+      bundesliga: 'Bundesliga',
+      outros: 'Outros'
     };
     const PRECOS = { importada: 150, nacional: 80 };
 
@@ -1243,7 +1262,25 @@
       { id:19, nome:"Camisa Brasil 2025",              modelo:"2025 s/n Torcedor CBF",              preco:150, imagem:"./Imgs/brasil/brasil_2025.jpg",                   imagens:["./Imgs/brasil/brasil_2025.jpg"],                   menu:"brasileirao", submenu:"brasil",      submenuNome:"Seleção Brasil",  descricao:"A camisa canarinho da Seleção Brasileira para 2025. O uniforme que representa a maior seleção do mundo, com o amarelo que ilumina as arquibancadas de todo o Brasil. Para quem vive o futebol com paixão e orgulho nacional." },
       { id:20, nome:"Camisa Brasil Copa 2026",         modelo:"2026 Copa do Mundo — Edição Especial",preco:150, imagem:"./Imgs/brasil/brasil_copa26.jpg",                imagens:["./Imgs/brasil/brasil_copa26.jpg"],                 menu:"brasileirao", submenu:"brasil",      submenuNome:"Seleção Brasil",  descricao:"Edição especial da Seleção Brasileira para a Copa do Mundo de 2026. A camisa que vai vestir o Brasil na maior competição do planeta. Uma peça histórica para colecionadores e torcedores que acreditam no hexa." },
       { id:21, nome:"Camisa Brasil Retrô R10",         modelo:"2006 Ronaldinho — Edição Retrô",      preco:150, imagem:"./Imgs/brasil/brasil_r10_2006.jpg",              imagens:["./Imgs/brasil/brasil_r10_2006.jpg"],               menu:"brasileirao", submenu:"brasil",      submenuNome:"Seleção Brasil",  descricao:"Resgata a camisa usada pelo gênio Ronaldinho Gaúcho em 2006. Uma homenagem ao craque que encantou o mundo com sua magia e alegria dentro de campo. Peça de colecionador para os amantes da era dourada do futebol brasileiro." },
-      { id:22, nome:"Camisa Barcelona Pro",            modelo:"2025/26 s/n Torcedor Nike",          preco:150, imagem:"./Imgs/barcelona/barcelona_2025.jpg",             imagens:["./Imgs/barcelona/barcelona_2025.jpg"],             menu:"laliga",      submenu:"barcelona",   submenuNome:"Barcelona",       descricao:"Camisa oficial do FC Barcelona para 2025/26. As icônicas listras blaugrana em versão de torcedor Nike, para você representar o Barça com toda a elegância e tradição do clube catalão." }
+      { id:22, nome:"Camisa Barcelona I 125 Anos",     modelo:"2024/25 s/n Torcedor Nike",          preco:150, imagem:"./Imgs/barcelona/barcelona_2025.jpg",             imagens:["./Imgs/barcelona/barcelona_2025.jpg"],             menu:"laliga",      submenu:"barcelona",   submenuNome:"Barcelona",       descricao:"Camisa principal do FC Barcelona 2024/25, celebrando os 125 anos do clube. O design divide o manto em grená e azul — uma homenagem ao DNA blaugrana. Patrocinador Spotify e patch comemorativo '125'. Nike Dri-FIT para os culés do mundo inteiro." },
+
+      // ---- BRASILEIRÃO — novos ----
+      { id:23, nome:"Camisa Cruzeiro I",               modelo:"2025 s/n Jogador Adidas",            preco:150, imagem:"./Imgs/cruzeiro/cruzeiro_azul_2025.jpg",          imagens:["./Imgs/cruzeiro/cruzeiro_azul_2025.jpg"],          menu:"brasileirao", submenu:"cruzeiro",    submenuNome:"Cruzeiro",        descricao:"Camisa oficial I do Cruzeiro Esporte Clube para 2025. O azul celeste intenso com detalhes dourados e a tecnologia Adidas AEROREADY fazem desta peça um símbolo de elegância e tradição da Raposa. Patrocínio Betfair e corte de jogador, perfeita para os apaixonados pela Cabulosa." },
+      { id:24, nome:"Camisa Brasil I",                  modelo:"2024 s/n Torcedor Nike",             preco:150, imagem:"./Imgs/brasil/brasil_amarela_2024.jpg",           imagens:["./Imgs/brasil/brasil_amarela_2024.jpg"],           menu:"brasileirao", submenu:"brasil",      submenuNome:"Seleção Brasil",  descricao:"A camisa I da Seleção Brasileira edição 2024. O clássico amarelo canarinho com gola e mangas em preto, estampa sutil no tecido e as cinco estrelas da CBF. Nike Dri-FIT com o design que leva o Brasil pelo mundo." },
+      { id:25, nome:"Camisa Corinthians II",            modelo:"2024/25 s/n Nike Todo Poderoso",     preco:150, imagem:"./Imgs/corinthias/corinthias_preta_2024.jpg",     imagens:["./Imgs/corinthias/corinthias_preta_2024.jpg"],     menu:"brasileirao", submenu:"corinthians", submenuNome:"Corinthians",     descricao:"Camisa II do Sport Club Corinthians Paulista 2024/25. Preta com mangas brancas em raglan e o emblema do Timão centralizado. Gola interna com inscrição 'TODO PODEROSO TIMÃO'. Nike Dri-FIT, perfeita para representar a Fiel em qualquer tribuna." },
+
+      // ---- OUTROS ----
+      { id:26, nome:"Camisa Colômbia I",                modelo:"2024/26 s/n Torcedor Adidas",        preco:150, imagem:"./Imgs/outras/colombia_home_2024.jpg",           imagens:["./Imgs/outras/colombia_home_2024.jpg"],           menu:"outros",      submenu:"colombia",    submenuNome:"Colômbia",        descricao:"Camisa principal da Seleção Colombiana. O vibrante amarelo com listras em vermelho e azul da Adidas captura a energia do futebol colombiano. Utilizada nas eliminatórias da Copa do Mundo 2026, refletindo a força de uma das seleções mais talentosas da América do Sul." },
+      { id:27, nome:"Camisa Portugal Edição Especial",  modelo:"2024 s/n Puma All Black Special",    preco:150, imagem:"./Imgs/outras/portugal_preta_especial.jpg",       imagens:["./Imgs/outras/portugal_preta_especial.jpg"],      menu:"outros",      submenu:"portugal",    submenuNome:"Portugal",        descricao:"Edição especial toda preta da Seleção Portuguesa com padrão all-over do brasão de armas de Portugal. Detalhes em verde e vermelho nas mangas, logo Puma dourado e badge FPF. Para os fãs das Quinas que buscam um visual ousado e elegante." },
+      { id:28, nome:"Camisa Itália Especial Adidas",    modelo:"2023 s/n Adidas Originals",          preco:150, imagem:"./Imgs/outras/italia_branca_2023.jpg",            imagens:["./Imgs/outras/italia_branca_2023.jpg"],           menu:"outros",      submenu:"italia",      submenuNome:"Itália",           descricao:"Edição especial FIGC pela Adidas Originals com o icônico trefoil. Branca com gola V em azul marinho e dourado, estampa geométrica sutil e brasão da Itália com 4 estrelas. Fusão de estilo retrô e identidade italiana para os amantes do calcio." },
+      { id:29, nome:"Camisa Itália Away Adidas",        modelo:"2024 s/n Adidas Originals",          preco:150, imagem:"./Imgs/outras/italia_branca2_2024.jpg",           imagens:["./Imgs/outras/italia_branca2_2024.jpg"],          menu:"outros",      submenu:"italia",      submenuNome:"Itália",           descricao:"Camisa visitante da Seleção Italiana pela Adidas Originals. Visual branco/cinza claro com gola V em azul marinho e dourado, logo trefoil e escudo FIGC com 4 estrelas. Design atemporal que homenageia a rica história da Azzurra." },
+      { id:30, nome:"Camisa AC Milan Edição Especial",  modelo:"2023/24 s/n Puma 4ª Camisa",         preco:150, imagem:"./Imgs/outras/acmilan_especial_2024.jpg",         imagens:["./Imgs/outras/acmilan_especial_2024.jpg"],        menu:"outros",      submenu:"acmilan",     submenuNome:"AC Milan",        descricao:"Quarta camisa do AC Milan 2023/24 em edição especial Puma. Fundo off-white com painéis laterais pretos e detalhes vermelhos, inspirada na arquitetura e flora de Milão. Uma peça de colecionador para os Rossoneri que apreciam design ousado e sofisticado." },
+      { id:31, nome:"Camisa México I Copa 2022",        modelo:"2022 s/n Adidas Copa do Mundo",      preco:150, imagem:"./Imgs/outras/mexico_verde_2022.jpg",             imagens:["./Imgs/outras/mexico_verde_2022.jpg"],            menu:"outros",      submenu:"mexico",      submenuNome:"México",           descricao:"Camisa oficial do México para a Copa do Mundo 2022 no Qatar. Verde intenso com elaborado padrão asteca inspirado no Calendário Solar, detalhes em branco e vermelho das cores nacionais. Adidas e FMF em uma das camisas mais elogiadas esteticamente do torneio." },
+      { id:32, nome:"Camisa Argentina Tri-Campeã 2022", modelo:"2022 3★ Adidas Copa Campeã",         preco:150, imagem:"./Imgs/outras/argentina_copa2022.jpg",           imagens:["./Imgs/outras/argentina_copa2022.jpg"],           menu:"outros",      submenu:"argentina",   submenuNome:"Argentina",       descricao:"A camisa histórica da Argentina tri-campeã do mundo. Listras branco e azul celeste, três estrelas, AFA badge e patch FIFA World Cup 2022. Usada por Messi e companhia na conquista inesquecível no Qatar. A camisa mais icônica de toda uma geração." },
+      { id:33, nome:"Camisa Espanha I Copa 2022",       modelo:"2022 s/n Adidas Copa do Mundo",      preco:150, imagem:"./Imgs/outras/espanha_vermelha_2022.jpg",        imagens:["./Imgs/outras/espanha_vermelha_2022.jpg"],        menu:"outros",      submenu:"espanha",     submenuNome:"Espanha",          descricao:"Camisa oficial da Seleção Espanhola para a Copa do Mundo 2022. Vermelha com listras verticais finas, mangas azul marinho e colarinho em amarelo e azul. RFEF badge e uma estrela. La Roja em seu uniforme clássico que representa décadas de excelência no futebol mundial." },
+      { id:34, nome:"Camisa Japão I Copa 2022",         modelo:"2022 s/n Adidas Copa do Mundo",      preco:150, imagem:"./Imgs/outras/japao_azul_2022.jpg",              imagens:["./Imgs/outras/japao_azul_2022.jpg"],              menu:"outros",      submenu:"japao",       submenuNome:"Japão",            descricao:"Camisa da Seleção Japonesa para a Copa 2022, onde o Japão surpreendeu eliminando Alemanha e Espanha. Azul royal profundo com padrão de linhas irradiantes inspirado na cultura nipônica. Uma das camisas mais elogiadas esteticamente do torneio do Qatar." },
+      { id:35, nome:"Camisa Alemanha I Copa 2022",      modelo:"2022 s/n Adidas Copa do Mundo",      preco:150, imagem:"./Imgs/outras/alemanha_branca_2022.jpg",         imagens:["./Imgs/outras/alemanha_branca_2022.jpg"],         menu:"outros",      submenu:"alemanha",    submenuNome:"Alemanha",        descricao:"Camisa da Seleção Alemã para a Copa do Mundo 2022. Branca com colarinho V nas cores da bandeira alemã (preto, vermelho e amarelo), logo Adidas e águia da DFB. Die Mannschaft em seu uniforme icônico para um dos torneios mais aguardados da história." },
+      { id:36, nome:"Camisa França Copa 2022",          modelo:"2022 s/n Nike Copa do Mundo",        preco:150, imagem:"./Imgs/outras/franca_azul_2022.jpg",             imagens:["./Imgs/outras/franca_azul_2022.jpg"],             menu:"outros",      submenu:"franca",      submenuNome:"França",           descricao:"Camisa da Seleção Francesa para a Copa do Mundo 2022, onde Les Bleus foram vice-campeões em final épica. Azul escuro com listras diagonais, gola polo branca e badge FFF com o galo. Nike Dri-FIT para os fãs de Mbappé e Griezmann." }
     ];
 
     function init() {
